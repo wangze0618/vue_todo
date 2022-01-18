@@ -1,8 +1,8 @@
 <template>
   <div class="todoapp">
-    <TodoHeader @addTask="createTask"></TodoHeader>
-    <TodoMain :arr="this.list" @deleteTask="deleteTask"></TodoMain>
-    <TodoFooter :arr="this.list"></TodoFooter>
+    <TodoHeader :arr="list" @addTask="createTask"></TodoHeader>
+    <TodoMain :arr="showArr" @deleteTask="deleteTask"></TodoMain>
+    <TodoFooter :arr="showArr" @clearDone="clearDone" @changeSel="changeSel"></TodoFooter>
   </div>
 </template>
 
@@ -15,11 +15,8 @@ import TodoFooter from "./components/TodoFooter";
 export default {
   data() {
     return {
-      list: [
-        { id: 100, name: "吃饭", isDone: true },
-        { id: 101, name: "睡觉", isDone: false },
-        { id: 102, name: "打豆豆", isDone: true },
-      ],
+      list: localStorage.getItem('list') ? JSON.parse(localStorage.getItem('list')) : [],
+      sel: 'all',
     }
   },
   methods: {
@@ -33,12 +30,39 @@ export default {
     },
     deleteTask(index) {
       this.list.splice(index, 1)
+    },
+    changeSel(sel) {
+      this.sel = sel
+      console.log(sel);
+    },
+    clearDone() {
+      this.list = this.list.filter(obj => obj.isDone == false)
     }
+  },
+  computed: {
+    showArr() {
+      if (this.sel == 'yes') {
+        return this.list.filter(obj => obj.isDone == true)
+      } else if (this.sel == 'no') {
+        return this.list.filter(obj => obj.isDone == false)
+      } else if (this.sel == 'all') {
+        return this.list
+      }
+    },
+
   },
   components: {
     TodoHeader,
     TodoMain,
     TodoFooter
+  },
+  watch: {
+    list: {
+      deep: true,
+      handler(newVal) {
+        localStorage.setItem('list', JSON.stringify(newVal))
+      }
+    }
   }
 }
 </script>

@@ -14,10 +14,18 @@
 <script>
 export default {
     props: ['arr'],
+    data() {
+        return {
+
+        }
+    },
     methods: {
         deleteTask(index) {
             this.$emit('deleteTask', index)
         }
-    }
+    },
+
+
+
 }
 </script>
